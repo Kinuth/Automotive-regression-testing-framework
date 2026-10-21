@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "automotive-regression-framework"
 version = "0.1.0"
 description = "A real-time-system-inspired automated regression testing portfolio project"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
@@ -17,6 +17,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 addopts = "-ra --strict-markers"
 
 [tool.coverage.run]

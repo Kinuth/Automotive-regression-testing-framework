@@ -1,5 +1,5 @@
 """Simulated automotive controller used as the system under test."""
 
-from .controller import ControllerState, VehicleController
+from .controller import ControllerConfig, ControllerState, VehicleController
 
-__all__ = ["ControllerState", "VehicleController"]
+__all__ = ["ControllerConfig", "ControllerState", "VehicleController"]
