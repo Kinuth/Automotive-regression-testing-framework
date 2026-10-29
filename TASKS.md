@@ -25,7 +25,7 @@ Implementation checklist and progress tracking for the automotive regression tes
 - [x] Expand negative tests: negative speeds, sub-minimum temperatures, wrong types (str, None, list, dict), boolean types, NaN, ±Inf
 - [x] Add configuration validation tests: invalid types, non-finite values, inverted ranges (`min >= max`)
 - [x] Add warning masking & isolation tests: verify neither sensor can mask a warning on the other
-- [x] Exceed minimum target of 25 meaningful test cases (73 tests implemented)
+- [x] Exceed minimum target of 25 meaningful test cases (89 tests implemented)
 - [x] Run test suite with branch coverage and verify >= 85% measured coverage (100.00% achieved)
 
 ### Phase 4: Defect Lifecycle Demonstration (BUG-001)
@@ -37,8 +37,8 @@ Implementation checklist and progress tracking for the automotive regression tes
 - [x] Document complete defect report in `docs/bug-reports/BUG-001.md` with root cause, reproduction, and verification evidence
 
 ### Phase 5: CI/CD Pipelines
-- [x] Verify `.github/workflows/tests.yml` triggers on push/PR, installs package, runs pytest with JUnit XML and coverage reports, uploads artifacts
-- [x] Update and verify `azure-pipelines.yml` matching workflow steps and artifact publishing
+- [x] Verify `.github/workflows/tests.yml` triggers on push/PR (matrix: Python 3.11, 3.12, 3.13), installs package, runs pytest with JUnit XML and coverage reports, uploads artifacts
+- [x] Update and verify `azure-pipelines.yml` matching workflow steps and artifact publishing (root layout paths)
 - [x] Document Azure DevOps setup instructions and prerequisites in README
 
 ### Phase 6: Documentation & Portfolio Artifacts

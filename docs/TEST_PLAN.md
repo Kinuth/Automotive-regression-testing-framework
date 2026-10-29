@@ -77,13 +77,13 @@ Establish and maintain a rigorous, automated verification process for the simula
 
 | Requirement ID | Description | Test Implementations |
 |---|---|---|
-| **REQ-001** | Inputs within safe limits produce `NORMAL` | `test_evaluate_operating_conditions`<br>`test_boundary_values`<br>`test_zero_values_are_valid` |
-| **REQ-002** | Exceeding speed or temperature produces `WARNING` | `test_evaluate_operating_conditions`<br>`test_boundary_values`<br>`test_temperature_warning_does_not_require_speed_warning`<br>`test_speed_warning_does_not_require_temperature_warning` |
+| **REQ-001** | Inputs within safe limits produce `NORMAL` | `test_evaluate_operating_conditions`<br>`test_boundary_values`<br>`test_zero_values_are_valid`<br>`test_integer_inputs_are_supported`<br>`test_controller_state_enum_properties` |
+| **REQ-002** | Exceeding speed or temperature produces `WARNING` | `test_evaluate_operating_conditions`<br>`test_boundary_values`<br>`test_boundary_extreme_paired_with_opposite_limit`<br>`test_extreme_finite_numeric_inputs_trigger_warning`<br>`test_temperature_warning_does_not_require_speed_warning`<br>`test_speed_warning_does_not_require_temperature_warning` |
 | **REQ-003** | Out-of-domain inputs rejected with `ValueError` | `test_negative_speed_is_rejected`<br>`test_temperature_below_sensor_domain_is_rejected` |
 | **REQ-004** | Invalid types, booleans, and non-finite rejected | `test_non_finite_speed_is_rejected`<br>`test_non_finite_temperature_is_rejected`<br>`test_non_numeric_speed_is_rejected`<br>`test_non_numeric_temperature_is_rejected`<br>`test_missing_arguments_rejected` |
 | **REQ-005** | Warning independence and safe state recovery | `test_warning_clears_when_values_return_to_safe_range`<br>`test_warning_masking_prevention` |
-| **REQ-006** | `ControllerConfig` validation rules | `test_default_controller_config`<br>`test_config_rejects_non_numeric_and_bool_types`<br>`test_config_rejects_non_finite_numbers`<br>`test_config_rejects_negative_min_speed`<br>`test_config_rejects_inverted_or_equal_speed_limits`<br>`test_config_rejects_inverted_or_equal_temperature_limits` |
-| **REQ-007** | Custom configuration support | `test_custom_valid_config` |
+| **REQ-006** | `ControllerConfig` validation rules | `test_default_controller_config`<br>`test_config_rejects_non_numeric_and_bool_types`<br>`test_config_rejects_non_finite_numbers`<br>`test_config_rejects_negative_min_speed`<br>`test_config_rejects_inverted_or_equal_speed_limits`<br>`test_config_rejects_inverted_or_equal_temperature_limits`<br>`test_config_immutability` |
+| **REQ-007** | Custom configuration support & controller injection | `test_custom_valid_config`<br>`test_controller_rejects_invalid_config_type` |
 | **REQ-008** | Defect regression defense | `test_regression_bug_001_exact_max_speed_is_normal`<br>`test_regression_exact_max_temperature_is_normal` |
 
 ---

@@ -4,6 +4,7 @@ Covers functional evaluation, boundary-value analysis, negative testing,
 configuration validation, warning independence, and state recovery.
 """
 
+import dataclasses
 import math
 import pytest
 
@@ -53,6 +54,14 @@ def test_warning_clears_when_values_return_to_safe_range(controller):
     assert controller.evaluate(100, 90) is ControllerState.NORMAL
 
 
+def test_controller_state_enum_properties():
+    """Verify ControllerState string enumeration membership and string equality."""
+    assert ControllerState.NORMAL == "normal"
+    assert ControllerState.WARNING == "warning"
+    assert isinstance(ControllerState.NORMAL, str)
+    assert isinstance(ControllerState.WARNING, str)
+
+
 # ==============================================================================
 # 2. Boundary-Value Analysis (BVA) (REQ-001, REQ-002, REQ-003)
 # ==============================================================================
@@ -79,6 +88,18 @@ def test_warning_clears_when_values_return_to_safe_range(controller):
 )
 def test_boundary_values(controller, speed, temperature, expected, description):
     """Verify precision boundary points at, just below, and just above configured limits."""
+    assert controller.evaluate(speed, temperature) is expected, f"Failed on: {description}"
+
+
+@pytest.mark.parametrize(
+    ("speed", "temperature", "expected", "description"),
+    [
+        (0.0, 110.1, ControllerState.WARNING, "min speed paired with over-limit temperature"),
+        (130.1, -40.0, ControllerState.WARNING, "over-limit speed paired with min temperature"),
+    ],
+)
+def test_boundary_extreme_paired_with_opposite_limit(controller, speed, temperature, expected, description):
+    """Verify minimum boundary on one signal does not suppress warning on the other signal."""
     assert controller.evaluate(speed, temperature) is expected, f"Failed on: {description}"
 
 
@@ -132,6 +153,33 @@ def test_missing_arguments_rejected(controller):
     """Verify calling evaluate with missing required arguments raises TypeError."""
     with pytest.raises(TypeError):
         controller.evaluate(50.0)  # missing temperature_c
+
+
+@pytest.mark.parametrize(
+    ("speed", "temperature", "expected"),
+    [
+        (100, 90, ControllerState.NORMAL),
+        (131, 90, ControllerState.WARNING),
+        (100, 111, ControllerState.WARNING),
+        (0, -40, ControllerState.NORMAL),
+    ],
+)
+def test_integer_inputs_are_supported(controller, speed, temperature, expected):
+    """Verify integer inputs for speed and temperature are properly evaluated."""
+    assert controller.evaluate(speed, temperature) is expected
+
+
+@pytest.mark.parametrize(
+    ("speed", "temperature"),
+    [
+        (1_000_000.0, 90.0),
+        (100.0, 1_000_000.0),
+        (1_000_000.0, 1_000_000.0),
+    ],
+)
+def test_extreme_finite_numeric_inputs_trigger_warning(controller, speed, temperature):
+    """Verify very large finite numeric values trigger warning rather than overflow."""
+    assert controller.evaluate(speed, temperature) is ControllerState.WARNING
 
 
 # ==============================================================================
@@ -256,6 +304,23 @@ def test_config_rejects_inverted_or_equal_temperature_limits(min_tmp, max_tmp):
     """Verify min_temperature_c must be strictly less than max_temperature_c."""
     with pytest.raises(ValueError, match="strictly less than max_temperature_c"):
         ControllerConfig(min_temperature_c=min_tmp, max_temperature_c=max_tmp)
+
+
+def test_config_immutability():
+    """Verify ControllerConfig is frozen and fields cannot be mutated."""
+    config = ControllerConfig()
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        config.max_speed_kmh = 140.0  # type: ignore[misc]
+
+
+@pytest.mark.parametrize(
+    "bad_config",
+    ["invalid_string", 123, True, {"max_speed_kmh": 140.0}, [130.0]],
+)
+def test_controller_rejects_invalid_config_type(bad_config):
+    """Verify VehicleController rejects non-ControllerConfig instances."""
+    with pytest.raises(TypeError, match="config must be an instance of ControllerConfig or None"):
+        VehicleController(config=bad_config)
 
 
 # ==============================================================================

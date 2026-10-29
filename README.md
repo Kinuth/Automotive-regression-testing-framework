@@ -3,7 +3,7 @@
 [![Python regression tests](https://github.com/Kinuth/Automotive-regression-testing-framework/actions/workflows/tests.yml/badge.svg)](https://github.com/Kinuth/Automotive-regression-testing-framework/actions/workflows/tests.yml)
 ![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
-![Test Results](https://img.shields.io/badge/tests-73%20passed-success)
+![Test Results](https://img.shields.io/badge/tests-89%20passed-success)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A software quality assurance and automated regression testing project demonstrating testing methodologies inspired by automotive controller validation workflows (e.g., Software-in-the-Loop / ECU function testing).
@@ -51,7 +51,7 @@ Sensor Signals (speed_kmh, temperature_c)
 - **`ControllerConfig`**: Immutable configuration dataclass defining physical bounds (`min_speed_kmh = 0.0`, `max_speed_kmh = 130.0`, `min_temperature_c = -40.0`, `max_temperature_c = 110.0`). Validates self-consistency upon instantiation.
 - **`ControllerState`**: Strict string enum (`ControllerState.NORMAL`, `ControllerState.WARNING`).
 
-For detailed architectural flowcharts and sequence diagrams, refer to [`automotive-regression-framework/docs/ARCHITECTURE.md`](automotive-regression-framework/docs/ARCHITECTURE.md).
+For detailed architectural flowcharts and sequence diagrams, refer to [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -76,16 +76,19 @@ For detailed architectural flowcharts and sequence diagrams, refer to [`automoti
 
 ```bash
 git clone https://github.com/Kinuth/Automotive-regression-testing-framework.git
-cd Automotive-regression-testing-framework/automotive-regression-framework
+cd Automotive-regression-testing-framework
 
 # Create and activate virtual environment
 python -m venv .venv
 
+# On Windows (Git Bash):
+source .venv/Scripts/activate
+
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+
 # On Linux / macOS:
 source .venv/bin/activate
-
-# On Windows PowerShell:
-.venv\Scripts\Activate.ps1
 ```
 
 ### 2. Install Package & Test Tools
@@ -114,30 +117,30 @@ pytest --junitxml=reports/junit-results.xml \
 
 ## 5. Verified Test Suite & Coverage Metrics
 
-The automated test suite in [`automotive-regression-framework/tests/test_controller.py`](automotive-regression-framework/tests/test_controller.py) contains **73 automated test cases**:
+The automated test suite in [`tests/test_controller.py`](tests/test_controller.py) contains **89 automated test cases**:
 
 | Test Tier | Focus & Coverage | Test Count |
 |---|---|---|
-| **Functional Testing** | Standard operating conditions, safe recovery, zero-point readings | 10 tests |
-| **Boundary-Value Analysis (BVA)** | Exact minimums, exact maximums, $\pm 0.1$ threshold boundaries | 12 tests |
+| **Functional Testing** | Standard operating conditions, safe recovery, zero-point readings, enum string properties | 11 tests |
+| **Boundary-Value Analysis (BVA)** | Exact minimums, exact maximums, $\pm 0.1$ threshold boundaries, paired minimum/maximum limits | 14 tests |
 | **Negative Input Validation** | Negative speed, sub-minimum temperatures, out-of-domain readings | 9 tests |
-| **Type & Numeric Safety** | Boolean rejection (`True`/`False`), non-numeric types, `NaN`, $\pm\infty$, missing args | 24 tests |
+| **Type & Numeric Safety** | Boolean rejection (`True`/`False`), non-numeric types, `NaN`, $\pm\infty$, missing args, integer support, large finite numbers | 31 tests |
 | **Warning Independence** | Non-masking warning transitions across multi-step sequences | 3 tests |
-| **Configuration Validation** | Inverted limits, negative min speed, non-finite config, custom thresholds | 13 tests |
+| **Configuration Validation** | Inverted limits, negative min speed, non-finite config, frozen immutability, invalid config type rejection, custom thresholds | 19 tests |
 | **Regression Guards** | Permanent guards for BUG-001 (speed boundary) and companion temperature boundary | 2 tests |
-| **Total** | Full verification suite | **73 tests** |
+| **Total** | Full verification suite | **89 tests** |
 
 ### Measured Code Coverage
 ```
 Name                                Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------
 src/vehicle_testing/__init__.py         2      0      0      0   100%
-src/vehicle_testing/controller.py      43      0     22      0   100%
+src/vehicle_testing/controller.py      45      0     24      0   100%
 -------------------------------------------------------------------------------
-TOTAL                                  45      0     22      0   100%
+TOTAL                                  47      0     24      0   100%
 Coverage XML written to file reports/coverage.xml
 Required test coverage of 85.0% reached. Total coverage: 100.00%
-============================= 73 passed in 1.43s ==============================
+============================= 89 passed in 2.88s ==============================
 ```
 
 ---
@@ -146,7 +149,7 @@ Required test coverage of 85.0% reached. Total coverage: 100.00%
 
 This project documents a realistic defect lifecycle demonstrating regression prevention:
 
-1. **Defect Report ([`automotive-regression-framework/docs/bug-reports/BUG-001.md`](automotive-regression-framework/docs/bug-reports/BUG-001.md))**:
+1. **Defect Report ([`docs/bug-reports/BUG-001.md`](docs/bug-reports/BUG-001.md))**:
    - An off-by-one boundary comparison in `VehicleController.evaluate()` (`>=` instead of `>`) incorrectly caused a vehicle cruising at the exact maximum allowable speed (`130.0 km/h`) to trigger a false-positive `ControllerState.WARNING`.
 2. **Reproduction Evidence**:
    - A dedicated test `test_regression_bug_001_exact_max_speed_is_normal` was authored and run against the unpatched logic, failing with:
@@ -156,7 +159,7 @@ This project documents a realistic defect lifecycle demonstrating regression pre
 3. **Patch & Verification**:
    - Condition corrected to strictly greater than (`>`).
    - Reproduction test re-executed: **PASSED**.
-   - Full regression suite re-executed: **73/73 PASSED**.
+   - Full regression suite re-executed: **89/89 PASSED**.
 
 ---
 
@@ -165,7 +168,7 @@ This project documents a realistic defect lifecycle demonstrating regression pre
 ### GitHub Actions
 Workflow file: [`.github/workflows/tests.yml`](.github/workflows/tests.yml)
 - **Triggers:** Push and pull request events against `main`.
-- **Matrix:** Python `3.12` and `3.13` on `ubuntu-latest`.
+- **Matrix:** Python `3.11`, `3.12`, and `3.13` on `ubuntu-latest`.
 - **Execution:** Installs package, runs `pytest` with coverage, outputs JUnit XML, and uploads test evidence artifacts.
 
 ### Azure DevOps Pipelines
@@ -181,10 +184,10 @@ Pipeline file: [`azure-pipelines.yml`](azure-pipelines.yml)
 
 ## 8. Release Validation & Traceability
 
-- **Requirement Traceability Matrix:** See [`automotive-regression-framework/docs/TEST_PLAN.md`](automotive-regression-framework/docs/TEST_PLAN.md).
-- **Sprint Backlog & User Stories:** See [`automotive-regression-framework/docs/SPRINT_BACKLOG.md`](automotive-regression-framework/docs/SPRINT_BACKLOG.md).
-- **Release Checklist:** See [`automotive-regression-framework/docs/RELEASE_CHECKLIST.md`](automotive-regression-framework/docs/RELEASE_CHECKLIST.md).
-- **Release Notes (v0.1.0 & v0.1.1):** See [`automotive-regression-framework/docs/RELEASE_NOTES.md`](automotive-regression-framework/docs/RELEASE_NOTES.md).
+- **Requirement Traceability Matrix:** See [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md).
+- **Sprint Backlog & User Stories:** See [`docs/SPRINT_BACKLOG.md`](docs/SPRINT_BACKLOG.md).
+- **Release Checklist:** See [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md).
+- **Release Notes (v0.1.0 & v0.1.1):** See [`docs/RELEASE_NOTES.md`](docs/RELEASE_NOTES.md).
 - **Task Implementation Tracker:** See [`TASKS.md`](TASKS.md).
 
 ---

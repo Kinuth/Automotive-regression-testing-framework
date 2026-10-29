@@ -15,12 +15,12 @@
   - `test_regression_bug_001_exact_max_speed_is_normal`: Permanent regression guard for the upper speed boundary.
   - `test_regression_exact_max_temperature_is_normal`: Permanent regression guard for the upper temperature boundary.
 - **Enhanced Configuration Validation**: Added strict type, finiteness, and range-ordering validations to `ControllerConfig.__post_init__`.
-- **Test Suite Expansion**: Total test case count expanded to 73 automated tests covering functional, boundary, negative, configuration, and warning isolation behaviors.
+- **Test Suite Expansion**: Total test case count expanded to 89 automated tests covering functional, boundary, negative, configuration, and warning isolation behaviors.
 
 ### Verification Evidence
-- **Tests Executed:** 73 passed, 0 failed, 0 skipped.
-- **Measured Code Coverage:** **100.00%** statement and branch coverage (45/45 statements, 22/22 branches).
-- **Execution Time:** ~1.43 seconds.
+- **Tests Executed:** 89 passed, 0 failed, 0 skipped.
+- **Measured Code Coverage:** **100.00%** statement and branch coverage (47/47 statements, 24/24 branches).
+- **Execution Time:** ~2.88 seconds.
 - **Artifacts Generated:** `reports/junit-results.xml`, `reports/coverage.xml`.
 
 ### Release Decision

@@ -61,6 +61,10 @@ class VehicleController:
     """Validate sensor inputs and derive a vehicle monitoring state."""
 
     def __init__(self, config: ControllerConfig | None = None) -> None:
+        if config is not None and not isinstance(config, ControllerConfig):
+            raise TypeError(
+                f"config must be an instance of ControllerConfig or None, got {type(config).__name__}"
+            )
         self.config = config if config is not None else ControllerConfig()
 
     @staticmethod

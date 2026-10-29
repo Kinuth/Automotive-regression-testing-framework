@@ -16,7 +16,6 @@ steps:
   - script: |
       python -m pip install --upgrade pip
       python -m pip install -e ".[dev]"
-    workingDirectory: 'automotive-regression-framework'
     displayName: 'Install package and test dependencies'
 
   - script: |
@@ -24,17 +23,16 @@ steps:
       python -m pytest --junitxml=reports/junit-results.xml \
         --cov=vehicle_testing --cov-report=xml:reports/coverage.xml \
         --cov-report=term-missing
-    workingDirectory: 'automotive-regression-framework'
     displayName: 'Run regression suite'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFormat: JUnit
-      testResultsFiles: 'automotive-regression-framework/reports/junit-results.xml'
+      testResultsFiles: 'reports/junit-results.xml'
       testRunTitle: 'Automotive regression tests'
 
   - task: PublishCodeCoverageResults@2
     condition: succeededOrFailed()
     inputs:
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/automotive-regression-framework/reports/coverage.xml'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/reports/coverage.xml'
